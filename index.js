@@ -46,23 +46,28 @@ client.on('messageCreate', async msg => {
   let currency = ''
   let amount = 0
   for (let i of textSplit.reverse()) {
-    if (i.includes("dollar") || i.includes("dolar") || i.includes("doller") || i.includes("doler") || i.includes("usd") || i.includes("доллар") || i.includes("долар") || i === "усд" || i === "усд." || i.includes("$")) {
+    if (i.includes("dollar") || i.includes("dolar") || i.includes("doller") || i.includes("doler") || i.includes("usd") || i.includes("доллар") || i.includes("долар") || i === "усд" || i === "усд." || i === ("$")) {
       currency = 'USD'
       break
     }
 
-    if (i.includes("euro") || i.includes("eur") || i.includes("евро") || i.includes("€")) {
+    if (i.includes("euro") || i.includes("eur") || i.includes("евро") || i === ("€")) {
       currency = 'EUR'
       break
     }
 
-    if (i.includes("ruble") || i.includes("rubble") || i.includes("rouble") || i.includes("roubble") || i.includes("bobux") || i.includes("rub") || i === ("руб") || i === ("руб.") || i.includes("рубл") || i.includes("₽")) {
+    if (i.includes("ruble") || i.includes("rubble") || i.includes("rouble") || i.includes("roubble") || i.includes("bobux") || i.includes("rub") || i === ("руб") || i === ("руб.") || i.includes("рубл") || i === ("₽")) {
       currency = 'RUB'
       break
     }
 
     if (i === "lei" || i === "лей" || i === 'ron') {
       currency = 'RON'
+      break
+    }
+
+    if (i.inclides("lira") || i === "try" || i === "₺") {
+      currency = "TRY"
       break
     }
   }
@@ -81,22 +86,27 @@ client.on('messageCreate', async msg => {
   
   if (currency === 'USD') {
     title = `🇺🇸 ${amount} $`
-    description = `🇪🇺 **${await convert(amount, "USD", "EUR")}** €\n🇷🇺 **${await convert(amount, "USD", "RUB")}** ₽\n🇷🇴 **${await convert(amount, "USD", "RON")}** lei`
+    description = `🇪🇺 **${await convert(amount, "USD", "EUR")}** €\n🇷🇺 **${await convert(amount, "USD", "RUB")}** ₽\n🇷🇴 **${await convert(amount, "USD", "RON")}** lei\n🇹🇷 **${await convert(amount, "USD", "TRY")}** ₺`
   }
 
   if (currency === 'EUR') {
     title = `🇪🇺 ${amount} €`
-    description = `🇺🇸 **${await convert(amount, "EUR", "USD")}** $\n🇷🇺 **${await convert(amount, "EUR", "RUB")}** ₽\n🇷🇴 **${await convert(amount, "EUR", "RON")}** lei`
+    description = `🇺🇸 **${await convert(amount, "EUR", "USD")}** $\n🇷🇺 **${await convert(amount, "EUR", "RUB")}** ₽\n🇷🇴 **${await convert(amount, "EUR", "RON")}** lei\n🇹🇷 **${await convert(amount, "EUR", "TRY")}** ₺`
   }
 
   if (currency === 'RUB') {
     title = `🇷🇺 ${amount} ₽`
-    description = `🇺🇸 **${await convert(amount, "RUB", "USD")}** $\n🇪🇺 **${await convert(amount, "RUB", "EUR")}** €\n🇷🇴 **${await convert(amount, "RUB", "RON")}** lei`
+    description = `🇺🇸 **${await convert(amount, "RUB", "USD")}** $\n🇪🇺 **${await convert(amount, "RUB", "EUR")}** €\n🇷🇴 **${await convert(amount, "RUB", "RON")}** lei\n🇹🇷 **${await convert(amount, "RUB", "TRY")}** ₺`
   }
 
   if (currency === 'RON') {
     title = `🇷🇴 ${amount} lei`
-    description = `🇺🇸 **${await convert(amount, "RUB", "USD")}** $\n🇪🇺 **${await convert(amount, "RUB", "EUR")}** €\n🇷🇺 **${await convert(amount, "RON", "RUB")}** ₽`
+    description = `🇺🇸 **${await convert(amount, "RUB", "USD")}** $\n🇪🇺 **${await convert(amount, "RUB", "EUR")}** €\n🇷🇺 **${await convert(amount, "RON", "RUB")}** ₽\n🇹🇷 **${await convert(amount, "RON", "TRY")}** ₺`
+  }
+
+  if (currency === "TRY") {
+    title = `🇹🇷 ${amount} ₺`
+    description = `🇺🇸 **${await convert(amount, "TRY", "USD")}** $\n🇪🇺 **${await convert(amount, "TRY", "EUR")}** €\n🇷🇺 **${await convert(amount, "TRY", "RUB")}** ₽\n🇷🇴 **${await convert(amount, "TRY", "RON")}** lei`
   }
 
   let embed = new EmbedBuilder()
