@@ -86,27 +86,57 @@ client.on('messageCreate', async msg => {
   
   if (currency === 'USD') {
     title = `🇺🇸 ${amount} $`
-    description = `🇪🇺 **${await convert(amount, "USD", "EUR")}** €\n🇷🇺 **${await convert(amount, "USD", "RUB")}** ₽\n🇷🇴 **${await convert(amount, "USD", "RON")}** lei\n🇹🇷 **${await convert(amount, "USD", "TRY")}** ₺`
+
+    let usdeur = await convert(amount, "USD", "EUR")
+    let usdrub = await convert(amount, "USD", "RUB")
+    let usdron = await convert(amount, "USD", "RON")
+    let usdtry = await convert(amount, "USD", "TRY")
+
+    description = `🇪🇺 **${usdeur}** €\n🇷🇺 **${usdrub}** ₽\n🇷🇴 **${usdron}** lei\n🇹🇷 **${usdtry}** ₺`
   }
 
   if (currency === 'EUR') {
     title = `🇪🇺 ${amount} €`
-    description = `🇺🇸 **${await convert(amount, "EUR", "USD")}** $\n🇷🇺 **${await convert(amount, "EUR", "RUB")}** ₽\n🇷🇴 **${await convert(amount, "EUR", "RON")}** lei\n🇹🇷 **${await convert(amount, "EUR", "TRY")}** ₺`
+
+    let eurusd = await convert(amount, "EUR", "USD")
+    let eurrub = await convert(amount, "EUR", "RUB")
+    let eurron = await convert(amount, "EUR", "RON")
+    let eurtry = await convert(amount, "EUR", "TRY")
+
+    description = `🇺🇸 **${eurusd}** $\n🇷🇺 **${eurrub}** ₽\n🇷🇴 **${eurron}** lei\n🇹🇷 **${eurtry}** ₺`
   }
 
   if (currency === 'RUB') {
     title = `🇷🇺 ${amount} ₽`
-    description = `🇺🇸 **${await convert(amount, "RUB", "USD")}** $\n🇪🇺 **${await convert(amount, "RUB", "EUR")}** €\n🇷🇴 **${await convert(amount, "RUB", "RON")}** lei\n🇹🇷 **${await convert(amount, "RUB", "TRY")}** ₺`
+
+    let rubusd = await convert(amount, "RUB", "USD")
+    let rubeur = await convert(amount, "RUB", "EUR")
+    let rubron = await convert(amount, "RUB", "RON")
+    let rubtry = await convert(amount, "RUB", "TRY")
+
+    description = `🇺🇸 **${rubusd}** $\n🇪🇺 **${rubeur}** €\n🇷🇴 **${rubron}** lei\n🇹🇷 **${rubtry}** ₺`
   }
 
   if (currency === 'RON') {
     title = `🇷🇴 ${amount} lei`
-    description = `🇺🇸 **${await convert(amount, "RUB", "USD")}** $\n🇪🇺 **${await convert(amount, "RUB", "EUR")}** €\n🇷🇺 **${await convert(amount, "RON", "RUB")}** ₽\n🇹🇷 **${await convert(amount, "RON", "TRY")}** ₺`
+
+    let ronusd = await convert(amount, "RON", "USD")
+    let roneur = await convert(amount, "RON", "EUR")
+    let ronrub = await convert(amount, "RON", "RUB")
+    let rontry = await convert(amount, "RON", "TRY")
+
+    description = `🇺🇸 **${ronusd}** $\n🇪🇺 **${roneur}** €\n🇷🇺 **${ronrub}** ₽\n🇹🇷 **${rontry}** ₺`
   }
 
   if (currency === "TRY") {
     title = `🇹🇷 ${amount} ₺`
-    description = `🇺🇸 **${await convert(amount, "TRY", "USD")}** $\n🇪🇺 **${await convert(amount, "TRY", "EUR")}** €\n🇷🇺 **${await convert(amount, "TRY", "RUB")}** ₽\n🇷🇴 **${await convert(amount, "TRY", "RON")}** lei`
+
+    let tryusd = await convert(amount, "TRY", "USD")
+    let tryeur = await convert(amount, "TRY", "EUR")
+    let tryrub = await convert(amount, "TRY", "RUB")
+    let tryron = await convert(amount, "TRY", "RON")
+
+    description = `🇺🇸 **${tryusd}** $\n🇪🇺 **${tryeur}** €\n🇷🇺 **${tryrub}** ₽\n🇷🇴 **${tryron}** lei`
   }
 
   let embed = new EmbedBuilder()
