@@ -5,15 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "prod": "node index.js"
+    "start": "node index.js",
+    "prod": "pm2 start index.js -n currency-bot"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vanethepain/currency-bot.git"
   },
   "keywords": [
-    "lmap",
-    "flag",
+    "currency",
     "bot"
   ],
   "author": "Ivan Akimov <vanethepain@icloud.com>",
