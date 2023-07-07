@@ -66,7 +66,7 @@ client.on('messageCreate', async msg => {
       break
     }
 
-    if (i.includes("lira") || i === "try" || i === "₺") {
+    if (i.includes("lira") || i === "₺") {
       currency = 'TRY'
       break
     }
