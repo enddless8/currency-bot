@@ -70,6 +70,11 @@ client.on('messageCreate', async msg => {
       currency = 'TRY'
       break
     }
+
+    if (i.includes("manat") || i === "azn" || i.includes("манат") || i === 'ман' || i === 'ман.' || i === "₼") {
+      currency = 'AZN'
+      break
+    }
   }
 
   for (let i of textSplit) {
@@ -90,9 +95,10 @@ client.on('messageCreate', async msg => {
     let usdeur = await convert(amount, "USD", "EUR")
     let usdrub = await convert(amount, "USD", "RUB")
     let usdron = await convert(amount, "USD", "RON")
+    let usdazn = await convert(amount, "USD", "AZN")
     let usdtry = await convert(amount, "USD", "TRY")
 
-    description = `🇪🇺 **${usdeur}** €\n🇷🇺 **${usdrub}** ₽\n🇷🇴 **${usdron}** lei\n🇹🇷 **${usdtry}** ₺`
+    description = `🇪🇺 **${usdeur}** €\n🇷🇺 **${usdrub}** ₽\n🇷🇴 **${usdron}** lei\n🇦🇿 **${usdazn}** ₼\n🇹🇷 **${usdtry}** ₺`
   }
 
   if (currency === 'EUR') {
@@ -101,9 +107,10 @@ client.on('messageCreate', async msg => {
     let eurusd = await convert(amount, "EUR", "USD")
     let eurrub = await convert(amount, "EUR", "RUB")
     let eurron = await convert(amount, "EUR", "RON")
+    let eurazn = await convert(amount, "EUR", "AZN")
     let eurtry = await convert(amount, "EUR", "TRY")
 
-    description = `🇺🇸 **${eurusd}** $\n🇷🇺 **${eurrub}** ₽\n🇷🇴 **${eurron}** lei\n🇹🇷 **${eurtry}** ₺`
+    description = `🇺🇸 **${eurusd}** $\n🇷🇺 **${eurrub}** ₽\n🇷🇴 **${eurron}** lei\n🇦🇿 **${eurazn}** ₼\n🇹🇷 **${eurtry}** ₺`
   }
 
   if (currency === 'RUB') {
@@ -112,9 +119,10 @@ client.on('messageCreate', async msg => {
     let rubusd = await convert(amount, "RUB", "USD")
     let rubeur = await convert(amount, "RUB", "EUR")
     let rubron = await convert(amount, "RUB", "RON")
+    let rubazn = await convert(amount, "RUB", "AZN")
     let rubtry = await convert(amount, "RUB", "TRY")
 
-    description = `🇺🇸 **${rubusd}** $\n🇪🇺 **${rubeur}** €\n🇷🇴 **${rubron}** lei\n🇹🇷 **${rubtry}** ₺`
+    description = `🇺🇸 **${rubusd}** $\n🇪🇺 **${rubeur}** €\n🇷🇴 **${rubron}** lei\n🇦🇿 **${rubazn}** ₼\n🇹🇷 **${rubtry}** ₺`
   }
 
   if (currency === 'RON') {
@@ -123,9 +131,10 @@ client.on('messageCreate', async msg => {
     let ronusd = await convert(amount, "RON", "USD")
     let roneur = await convert(amount, "RON", "EUR")
     let ronrub = await convert(amount, "RON", "RUB")
+    let ronazn = await convert(amount, "RON", "AZN")
     let rontry = await convert(amount, "RON", "TRY")
 
-    description = `🇺🇸 **${ronusd}** $\n🇪🇺 **${roneur}** €\n🇷🇺 **${ronrub}** ₽\n🇹🇷 **${rontry}** ₺`
+    description = `🇺🇸 **${ronusd}** $\n🇪🇺 **${roneur}** €\n🇷🇺 **${ronrub}** ₽\n🇦🇿 **${ronazn}** ₼\n🇹🇷 **${rontry}** ₺`
   }
 
   if (currency === "TRY") {
@@ -134,9 +143,22 @@ client.on('messageCreate', async msg => {
     let tryusd = await convert(amount, "TRY", "USD")
     let tryeur = await convert(amount, "TRY", "EUR")
     let tryrub = await convert(amount, "TRY", "RUB")
+    let tryazn = await convert(amount, "TRY", "AZN")
     let tryron = await convert(amount, "TRY", "RON")
 
-    description = `🇺🇸 **${tryusd}** $\n🇪🇺 **${tryeur}** €\n🇷🇺 **${tryrub}** ₽\n🇷🇴 **${tryron}** lei`
+    description = `🇺🇸 **${tryusd}** $\n🇪🇺 **${tryeur}** €\n🇷🇺 **${tryrub}** ₽\n🇷🇴 **${tryron}** lei\n🇦🇿 **${tryazn}** ₼`
+  }
+
+  if (currency === "AZN") {
+    title = `🇦🇿 ${amount} ₼`
+
+    let aznusd = await convert(amount, "AZN", "USD")
+    let azneur = await convert(amount, "AZN", "EUR")
+    let aznrub = await convert(amount, "AZN", "RUB")
+    let aznron = await convert(amount, "AZN", "RON")
+    let azntry = await convert(amount, "AZN", "TRY")
+
+    description = `🇺🇸 **${aznusd}** $\n🇪🇺 **${azneur}** €\n🇷🇺 **${aznrub}** ₽\n🇷🇴 **${aznron}** lei\n🇹🇷 **${azntry}** ₺`
   }
 
   let embed = new EmbedBuilder()
