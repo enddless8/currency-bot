@@ -24,23 +24,6 @@ client.on('messageCreate', async msg => {
   let text = msg.content.toLowerCase().replace('ё', 'е')
   let textSplit = text.split(" ")
 
-  let prefix = text[0]
-  let command = text.slice(2)
-
-  let authorPing = `<@!${msg.author.id.toString()}>`
-  let authorTag = msg.author.tag
-  let authorUsername = msg.author.username
-  let authorAvatar = msg.author.displayAvatarURL({dynamic: true})
-
-  let authorColor
-  try {
-    authorColor = msg.member.displayHexColor
-  } catch {
-    authorColor = '#000000'
-  }
-
-  let getGuild = client.guilds.cache.get(msg.guild.id)
-
   if (msg.author.bot) return
 
   let currency = ''
@@ -61,18 +44,23 @@ client.on('messageCreate', async msg => {
       break
     }
 
-    if (i === "lei" || i === "лей" || i === 'ron') {
+    if (i === "lei" || i === "лей" || i === 'леи' || i === 'ron') {
       currency = 'RON'
-      break
-    }
-
-    if (i.includes("lira") || i === "₺") {
-      currency = 'TRY'
       break
     }
 
     if (i.includes("manat") || i === "azn" || i.includes("манат") || i === 'ман' || i === 'ман.' || i === "₼") {
       currency = 'AZN'
+      break
+    }
+
+    if (i.includes("dirham") || i === "mad" || i.includes("дирхам") || i === "dh") {
+      currency = 'MAD'
+      break
+    }
+
+    if (i.includes("lira") || i.includes("лир") || i === "tl" || i === "₺") {
+      currency = 'TRY'
       break
     }
   }
@@ -90,75 +78,94 @@ client.on('messageCreate', async msg => {
   let description
   
   if (currency === 'USD') {
-    title = `🇺🇸 ${amount} $`
+    title = `🇺🇸 ${amount} USD ($)`
 
     let usdeur = await convert(amount, "USD", "EUR")
     let usdrub = await convert(amount, "USD", "RUB")
     let usdron = await convert(amount, "USD", "RON")
     let usdazn = await convert(amount, "USD", "AZN")
+    let usdmad = await convert(amount, "USD", "MAD")
     let usdtry = await convert(amount, "USD", "TRY")
 
-    description = `🇪🇺 **${usdeur}** €\n🇷🇺 **${usdrub}** ₽\n🇷🇴 **${usdron}** lei\n🇦🇿 **${usdazn}** ₼\n🇹🇷 **${usdtry}** ₺`
+    description = `🇪🇺 **${usdeur}** EUR (€)\n🇷🇺 **${usdrub}** RUB (₽)\n🇷🇴 **${usdron}** RON (lei)\n🇦🇿 **${usdazn}** AZN (₼)\n🇲🇦 **${usdmad}** MAD (DH)\n🇹🇷 **${usdtry}** TRY (₺)`
   }
 
   if (currency === 'EUR') {
-    title = `🇪🇺 ${amount} €`
+    title = `🇪🇺 ${amount} EUR (€)`
 
     let eurusd = await convert(amount, "EUR", "USD")
     let eurrub = await convert(amount, "EUR", "RUB")
     let eurron = await convert(amount, "EUR", "RON")
     let eurazn = await convert(amount, "EUR", "AZN")
+    let eurmad = await convert(amount, "EUR", "MAD")
     let eurtry = await convert(amount, "EUR", "TRY")
 
-    description = `🇺🇸 **${eurusd}** $\n🇷🇺 **${eurrub}** ₽\n🇷🇴 **${eurron}** lei\n🇦🇿 **${eurazn}** ₼\n🇹🇷 **${eurtry}** ₺`
+    description = `🇺🇸 **${eurusd}** USD ($)\n🇷🇺 **${eurrub}** RUB (₽)\n🇷🇴 **${eurron}** RON (lei)\n🇦🇿 **${eurazn}** AZN (₼)\n🇲🇦 **${eurmad}** MAD (DH)\n🇹🇷 **${eurtry}** TRY (₺)`
   }
 
   if (currency === 'RUB') {
-    title = `🇷🇺 ${amount} ₽`
+    title = `🇷🇺 ${amount} RUB (₽)`
 
     let rubusd = await convert(amount, "RUB", "USD")
     let rubeur = await convert(amount, "RUB", "EUR")
     let rubron = await convert(amount, "RUB", "RON")
     let rubazn = await convert(amount, "RUB", "AZN")
+    let rubmad = await convert(amount, "RUB", "MAD")
     let rubtry = await convert(amount, "RUB", "TRY")
 
-    description = `🇺🇸 **${rubusd}** $\n🇪🇺 **${rubeur}** €\n🇷🇴 **${rubron}** lei\n🇦🇿 **${rubazn}** ₼\n🇹🇷 **${rubtry}** ₺`
+    description = `🇺🇸 **${rubusd}** USD ($)\n🇪🇺 **${rubeur}** EUR (€)\n🇷🇴 **${rubron}** RON (lei)\n🇦🇿 **${rubazn}** AZN (₼)\n🇲🇦 **${rubmad}** MAD (DH)\n🇹🇷 **${rubtry}** TRY (₺)`
   }
 
   if (currency === 'RON') {
-    title = `🇷🇴 ${amount} lei`
+    title = `🇷🇴 ${amount} RON (lei)`
 
     let ronusd = await convert(amount, "RON", "USD")
     let roneur = await convert(amount, "RON", "EUR")
     let ronrub = await convert(amount, "RON", "RUB")
     let ronazn = await convert(amount, "RON", "AZN")
+    let ronmad = await convert(amount, "RON", "MAD")
     let rontry = await convert(amount, "RON", "TRY")
 
-    description = `🇺🇸 **${ronusd}** $\n🇪🇺 **${roneur}** €\n🇷🇺 **${ronrub}** ₽\n🇦🇿 **${ronazn}** ₼\n🇹🇷 **${rontry}** ₺`
-  }
-
-  if (currency === "TRY") {
-    title = `🇹🇷 ${amount} ₺`
-
-    let tryusd = await convert(amount, "TRY", "USD")
-    let tryeur = await convert(amount, "TRY", "EUR")
-    let tryrub = await convert(amount, "TRY", "RUB")
-    let tryazn = await convert(amount, "TRY", "AZN")
-    let tryron = await convert(amount, "TRY", "RON")
-
-    description = `🇺🇸 **${tryusd}** $\n🇪🇺 **${tryeur}** €\n🇷🇺 **${tryrub}** ₽\n🇷🇴 **${tryron}** lei\n🇦🇿 **${tryazn}** ₼`
+    description = `🇺🇸 **${ronusd}** USD ($)\n🇪🇺 **${roneur}** EUR (€)\n🇷🇺 **${ronrub}** RUB (₽)\n🇦🇿 **${ronazn}** AZN (₼)\n🇲🇦 **${ronmad}** MAD (DH)\n🇹🇷 **${rontry}** TRY (₺)`
   }
 
   if (currency === "AZN") {
-    title = `🇦🇿 ${amount} ₼`
+    title = `🇦🇿 ${amount} AZN (₼)`
 
     let aznusd = await convert(amount, "AZN", "USD")
     let azneur = await convert(amount, "AZN", "EUR")
     let aznrub = await convert(amount, "AZN", "RUB")
     let aznron = await convert(amount, "AZN", "RON")
+    let aznmad = await convert(amount, "AZN", "MAD")
     let azntry = await convert(amount, "AZN", "TRY")
 
-    description = `🇺🇸 **${aznusd}** $\n🇪🇺 **${azneur}** €\n🇷🇺 **${aznrub}** ₽\n🇷🇴 **${aznron}** lei\n🇹🇷 **${azntry}** ₺`
+    description = `🇺🇸 **${aznusd}** USD ($)\n🇪🇺 **${azneur}** EUR (€)\n🇷🇺 **${aznrub}** RUB (₽)\n🇷🇴 **${aznron}** RON (lei)\n🇲🇦 **${aznmad}** MAD (DH)\n🇹🇷 **${azntry}** TRY (₺)`
+  }
+
+  if (currency === "MAD") {
+    title = `🇲🇦 ${amount} MAD (DH)`
+
+    let madusd = await convert(amount, "MAD", "USD")
+    let madeur = await convert(amount, "MAD", "EUR")
+    let madrub = await convert(amount, "MAD", "RUB")
+    let madron = await convert(amount, "MAD", "RON")
+    let madazn = await convert(amount, "MAD", "AZN")
+    let madtry = await convert(amount, "MAD", "TRY")
+
+    description = `🇺🇸 **${madusd}** USD ($)\n🇪🇺 **${madeur}** EUR (€)\n🇷🇺 **${madrub}** RUB (₽)\n🇷🇴 **${madron}** RON (lei)\n🇦🇿 **${madazn}** AZN (₼)\n🇹🇷 **${madtry}** TRY (₺)`
+  }
+
+  if (currency === "TRY") {
+    title = `🇹🇷 ${amount} TRY (₺)`
+
+    let tryusd = await convert(amount, "TRY", "USD")
+    let tryeur = await convert(amount, "TRY", "EUR")
+    let tryrub = await convert(amount, "TRY", "RUB")
+    let tryron = await convert(amount, "TRY", "RON")
+    let tryazn = await convert(amount, "TRY", "AZN")
+    let trymad = await convert(amount, "TRY", "MAD")
+
+    description = `🇺🇸 **${tryusd}** USD ($)\n🇪🇺 **${tryeur}** EUR (€)\n🇷🇺 **${tryrub}** RUB (₽)\n🇷🇴 **${tryron}** RON (lei)\n🇦🇿 **${tryazn}** AZN (₼)\n🇲🇦 **${trymad}** MAD (DH)`
   }
 
   let embed = new EmbedBuilder()
