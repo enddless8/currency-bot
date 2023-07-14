@@ -1,9 +1,14 @@
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js')
-const { token } = require('./config.json')
+const fs = require('node:fs')
+const path = require('node:path')
+const { REST, Routes, Client, Collection, Events, GatewayIntentBits, EmbedBuilder } = require('discord.js')
+const { token, clientId } = require('./config.json')
 
-const { convert } = require('./functions/convert.js')
+const { convertAndFormat } = require('./functions/convertAndFormat.js')
 
 const { version } = require('./package.json')
+
+const flags = require('./dictionaries/flags.json')
+const symbols = require('./dictionaries/symbols.json')
 
 const client = new Client({ intents: [ 
   GatewayIntentBits.DirectMessages,
@@ -12,13 +17,51 @@ const client = new Client({ intents: [
   GatewayIntentBits.MessageContent,] 
 })
 
+client.commands = new Collection()
+
+const commandsPath = path.join(__dirname, 'commands')
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'))
+const commands = []
+
+for (const file of commandFiles) {
+  const filePath = path.join(commandsPath, file)
+  const command = require(filePath)
+
+  if ('data' in command && 'execute' in command) {
+    commands.push(command.data.toJSON())
+    client.commands.set(command.data.name, command)
+  } else {
+    console.log(`⚠️ the command at ${filePath} is missing a required "data" or "execute" property.`)
+  }
+}
+
+const rest = new REST().setToken(token);
+
+(async () => {
+  try {
+    console.log(`⏳ started refreshing ${commands.length} application (/) commands.`)
+
+    const data = await rest.put(
+      Routes.applicationCommands(clientId),
+      { body: commands },
+    );
+
+    console.log(`✔️ successfully reloaded ${data.length} application (/) commands.`)
+  } catch (error) {
+    console.error(error)
+  }
+})()
+
+
 client.once('ready', () => {
+  console.log('')
   console.log(`⚡ currency-bot ${version} is ready to do its job!`)
   console.log('⚡ with 💗 by vanethepain')
   console.log(`✔️ logged in as ${client.user.tag}`)
 
   client.user.setPresence({activities: [{type: 'WATCHING', name: 'currencies'}] })
 })
+
 
 client.on('messageCreate', async msg => {
   let text = msg.content.toLowerCase().replace('ё', 'е')
@@ -28,6 +71,7 @@ client.on('messageCreate', async msg => {
 
   let currency = ''
   let amount = 0
+  let amountToFixed = 0
   for (let i of textSplit.reverse()) {
     if (i.includes("dollar") || i.includes("dolar") || i.includes("doller") || i.includes("doler") || i.includes("usd") || i.includes("доллар") || i.includes("долар") || i === "усд" || i === "усд." || i === ("$")) {
       currency = 'USD'
@@ -59,6 +103,11 @@ client.on('messageCreate', async msg => {
       break
     }
 
+    if (i.includes("itlira") || i === "itl") {
+      currency = 'ITL'
+      break
+    }
+
     if (i.includes("lira") || i.includes("лир") || i === "tl" || i === "₺") {
       currency = 'TRY'
       break
@@ -68,112 +117,143 @@ client.on('messageCreate', async msg => {
   for (let i of textSplit) {
     if (!isNaN(Number(i.replace(',', '.')))) {
       amount = Number(i.replace(',', '.'))
+      amountToFixed = amount.toFixed(2)
       break
     }
   }
 
-  if (!currency && !amount) return
+  if (!currency || !amount) return
 
-  let title
+  let title = `${flags[currency]} ${amountToFixed} ${currency} (${symbols[currency]})`
   let description
   
   if (currency === 'USD') {
-    title = `🇺🇸 ${amount} USD ($)`
+    let usdeur = await convertAndFormat(amount, "USD", "EUR")
+    let usdrub = await convertAndFormat(amount, "USD", "RUB")
+    let usdron = await convertAndFormat(amount, "USD", "RON")
+    let usdazn = await convertAndFormat(amount, "USD", "AZN")
+    let usdmad = await convertAndFormat(amount, "USD", "MAD")
+    let usditl = await convertAndFormat(amount, "USD", "ITL")
+    let usdtry = await convertAndFormat(amount, "USD", "TRY")
 
-    let usdeur = await convert(amount, "USD", "EUR")
-    let usdrub = await convert(amount, "USD", "RUB")
-    let usdron = await convert(amount, "USD", "RON")
-    let usdazn = await convert(amount, "USD", "AZN")
-    let usdmad = await convert(amount, "USD", "MAD")
-    let usdtry = await convert(amount, "USD", "TRY")
-
-    description = `🇪🇺 **${usdeur}** EUR (€)\n🇷🇺 **${usdrub}** RUB (₽)\n🇷🇴 **${usdron}** RON (lei)\n🇦🇿 **${usdazn}** AZN (₼)\n🇲🇦 **${usdmad}** MAD (DH)\n🇹🇷 **${usdtry}** TRY (₺)`
+    description = `${usdeur}\n${usdrub}\n${usdron}\n${usdazn}\n${usdmad}\n${usditl}\n${usdtry}`
   }
 
   if (currency === 'EUR') {
-    title = `🇪🇺 ${amount} EUR (€)`
+    let eurusd = await convertAndFormat(amount, "EUR", "USD")
+    let eurrub = await convertAndFormat(amount, "EUR", "RUB")
+    let eurron = await convertAndFormat(amount, "EUR", "RON")
+    let eurazn = await convertAndFormat(amount, "EUR", "AZN")
+    let eurmad = await convertAndFormat(amount, "EUR", "MAD")
+    let euritl = await convertAndFormat(amount, "EUR", "ITL")
+    let eurtry = await convertAndFormat(amount, "EUR", "TRY")
 
-    let eurusd = await convert(amount, "EUR", "USD")
-    let eurrub = await convert(amount, "EUR", "RUB")
-    let eurron = await convert(amount, "EUR", "RON")
-    let eurazn = await convert(amount, "EUR", "AZN")
-    let eurmad = await convert(amount, "EUR", "MAD")
-    let eurtry = await convert(amount, "EUR", "TRY")
-
-    description = `🇺🇸 **${eurusd}** USD ($)\n🇷🇺 **${eurrub}** RUB (₽)\n🇷🇴 **${eurron}** RON (lei)\n🇦🇿 **${eurazn}** AZN (₼)\n🇲🇦 **${eurmad}** MAD (DH)\n🇹🇷 **${eurtry}** TRY (₺)`
+    description = `${eurusd}\n${eurrub}\n${eurron}\n${eurazn}\n${eurmad}\n${euritl}\n${eurtry}`
   }
 
   if (currency === 'RUB') {
-    title = `🇷🇺 ${amount} RUB (₽)`
+    let rubusd = await convertAndFormat(amount, "RUB", "USD")
+    let rubeur = await convertAndFormat(amount, "RUB", "EUR")
+    let rubron = await convertAndFormat(amount, "RUB", "RON")
+    let rubazn = await convertAndFormat(amount, "RUB", "AZN")
+    let rubmad = await convertAndFormat(amount, "RUB", "MAD")
+    let rubitl = await convertAndFormat(amount, "RUB", "ITL")
+    let rubtry = await convertAndFormat(amount, "RUB", "TRY")
 
-    let rubusd = await convert(amount, "RUB", "USD")
-    let rubeur = await convert(amount, "RUB", "EUR")
-    let rubron = await convert(amount, "RUB", "RON")
-    let rubazn = await convert(amount, "RUB", "AZN")
-    let rubmad = await convert(amount, "RUB", "MAD")
-    let rubtry = await convert(amount, "RUB", "TRY")
-
-    description = `🇺🇸 **${rubusd}** USD ($)\n🇪🇺 **${rubeur}** EUR (€)\n🇷🇴 **${rubron}** RON (lei)\n🇦🇿 **${rubazn}** AZN (₼)\n🇲🇦 **${rubmad}** MAD (DH)\n🇹🇷 **${rubtry}** TRY (₺)`
+    description = `${rubusd}\n${rubeur}\n${rubron}\n${rubazn}\n${rubmad}\n${rubitl}\n${rubtry}`
   }
 
   if (currency === 'RON') {
-    title = `🇷🇴 ${amount} RON (lei)`
+    let ronusd = await convertAndFormat(amount, "RON", "USD")
+    let roneur = await convertAndFormat(amount, "RON", "EUR")
+    let ronrub = await convertAndFormat(amount, "RON", "RUB")
+    let ronazn = await convertAndFormat(amount, "RON", "AZN")
+    let ronmad = await convertAndFormat(amount, "RON", "MAD")
+    let romitl = await convertAndFormat(amount, "RON", "ITL")
+    let rontry = await convertAndFormat(amount, "RON", "TRY")
 
-    let ronusd = await convert(amount, "RON", "USD")
-    let roneur = await convert(amount, "RON", "EUR")
-    let ronrub = await convert(amount, "RON", "RUB")
-    let ronazn = await convert(amount, "RON", "AZN")
-    let ronmad = await convert(amount, "RON", "MAD")
-    let rontry = await convert(amount, "RON", "TRY")
-
-    description = `🇺🇸 **${ronusd}** USD ($)\n🇪🇺 **${roneur}** EUR (€)\n🇷🇺 **${ronrub}** RUB (₽)\n🇦🇿 **${ronazn}** AZN (₼)\n🇲🇦 **${ronmad}** MAD (DH)\n🇹🇷 **${rontry}** TRY (₺)`
+    description = `${ronusd}\n${roneur}\n${ronrub}\n${ronazn}\n${ronmad}\n${ronitl}\n${rontry}`
   }
 
   if (currency === "AZN") {
-    title = `🇦🇿 ${amount} AZN (₼)`
+    let aznusd = await convertAndFormat(amount, "AZN", "USD")
+    let azneur = await convertAndFormat(amount, "AZN", "EUR")
+    let aznrub = await convertAndFormat(amount, "AZN", "RUB")
+    let aznron = await convertAndFormat(amount, "AZN", "RON")
+    let aznmad = await convertAndFormat(amount, "AZN", "MAD")
+    let aznitl = await convertAndFormat(amount, "RON", "ITL")
+    let azntry = await convertAndFormat(amount, "AZN", "TRY")
 
-    let aznusd = await convert(amount, "AZN", "USD")
-    let azneur = await convert(amount, "AZN", "EUR")
-    let aznrub = await convert(amount, "AZN", "RUB")
-    let aznron = await convert(amount, "AZN", "RON")
-    let aznmad = await convert(amount, "AZN", "MAD")
-    let azntry = await convert(amount, "AZN", "TRY")
-
-    description = `🇺🇸 **${aznusd}** USD ($)\n🇪🇺 **${azneur}** EUR (€)\n🇷🇺 **${aznrub}** RUB (₽)\n🇷🇴 **${aznron}** RON (lei)\n🇲🇦 **${aznmad}** MAD (DH)\n🇹🇷 **${azntry}** TRY (₺)`
+    description = `${aznusd}\n${azneur}\n${aznrub}\n${aznron}\n${aznmad}\n${aznitl}\n${azntry}`
   }
 
   if (currency === "MAD") {
-    title = `🇲🇦 ${amount} MAD (DH)`
+    let madusd = await convertAndFormat(amount, "MAD", "USD")
+    let madeur = await convertAndFormat(amount, "MAD", "EUR")
+    let madrub = await convertAndFormat(amount, "MAD", "RUB")
+    let madron = await convertAndFormat(amount, "MAD", "RON")
+    let madazn = await convertAndFormat(amount, "MAD", "AZN")
+    let maditl = await convertAndFormat(amount, "RON", "ITL")
+    let madtry = await convertAndFormat(amount, "MAD", "TRY")
 
-    let madusd = await convert(amount, "MAD", "USD")
-    let madeur = await convert(amount, "MAD", "EUR")
-    let madrub = await convert(amount, "MAD", "RUB")
-    let madron = await convert(amount, "MAD", "RON")
-    let madazn = await convert(amount, "MAD", "AZN")
-    let madtry = await convert(amount, "MAD", "TRY")
+    description = `${madusd}\n${madeur}\n${madrub}\n${madron}\n${madazn}\n${maditl}\n${madtry}`
+  }
 
-    description = `🇺🇸 **${madusd}** USD ($)\n🇪🇺 **${madeur}** EUR (€)\n🇷🇺 **${madrub}** RUB (₽)\n🇷🇴 **${madron}** RON (lei)\n🇦🇿 **${madazn}** AZN (₼)\n🇹🇷 **${madtry}** TRY (₺)`
+  if (currency === "ITL") {
+    let itlusd = await convertAndFormat(amount, "ITL", "USD")
+    let itleur = await convertAndFormat(amount, "ITL", "EUR")
+    let itlrub = await convertAndFormat(amount, "ITL", "RUB")
+    let itlron = await convertAndFormat(amount, "ITL", "RON")
+    let itlazn = await convertAndFormat(amount, "ITL", "AZN")
+    let itlmad = await convertAndFormat(amount, "ITL", "MAD")
+    let itltry = await convertAndFormat(amount, "ITL", "TRY")
+
+    description = `${itlusd}\n${itleur}\n${itlrub}\n${itlron}\n${itlazn}\n${itlmad}\n${itltry}`
   }
 
   if (currency === "TRY") {
-    title = `🇹🇷 ${amount} TRY (₺)`
+    let tryusd = await convertAndFormat(amount, "TRY", "USD")
+    let tryeur = await convertAndFormat(amount, "TRY", "EUR")
+    let tryrub = await convertAndFormat(amount, "TRY", "RUB")
+    let tryron = await convertAndFormat(amount, "TRY", "RON")
+    let tryazn = await convertAndFormat(amount, "TRY", "AZN")
+    let trymad = await convertAndFormat(amount, "TRY", "MAD")
+    let tryitl = await convertAndFormat(amount, "RON", "ITL")
 
-    let tryusd = await convert(amount, "TRY", "USD")
-    let tryeur = await convert(amount, "TRY", "EUR")
-    let tryrub = await convert(amount, "TRY", "RUB")
-    let tryron = await convert(amount, "TRY", "RON")
-    let tryazn = await convert(amount, "TRY", "AZN")
-    let trymad = await convert(amount, "TRY", "MAD")
-
-    description = `🇺🇸 **${tryusd}** USD ($)\n🇪🇺 **${tryeur}** EUR (€)\n🇷🇺 **${tryrub}** RUB (₽)\n🇷🇴 **${tryron}** RON (lei)\n🇦🇿 **${tryazn}** AZN (₼)\n🇲🇦 **${trymad}** MAD (DH)`
+    description = `${tryusd}\n${tryeur}\n${tryrub}\n${tryron}\n${tryazn}\n${trymad}\n${tryitl}`
   }
 
   let embed = new EmbedBuilder()
     .setColor(0x85BB65)
     .setTitle(title)
     .setDescription(description)
+    .setTimestamp()
 
   msg.reply({embeds: [embed]}).catch((e) => {console.error(e)})
 })
+
+
+client.on(Events.InteractionCreate, async interaction => {
+  if (!interaction.isChatInputCommand()) return
+
+  const command = interaction.client.commands.get(interaction.commandName)
+
+  if (!command) {
+    console.error(`No command matching ${interaction.commandName} was found.`)
+    return
+  }
+
+  try {
+    await command.execute(interaction)
+  } catch (error) {
+    console.error(error);
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({ content: 'There was an error while executing this command :(', ephemeral: true })
+    } else {
+      await interaction.reply({ content: 'There was an error while executing this command :(', ephemeral: true })
+    }
+  }
+})
+
 
 client.login(token)
