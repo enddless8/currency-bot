@@ -14,6 +14,7 @@ This bot can convert currencies from your messages.
 
 **My commands:**
 • </convert:1129484010402369546> - convert from 1st currency to 2nd currency
+• </changelog:1129522493527425196> - changelog of the bot
 `
 
     let embed = new EmbedBuilder()

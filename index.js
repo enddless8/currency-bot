@@ -169,7 +169,7 @@ client.on('messageCreate', async msg => {
     let ronrub = await convertAndFormat(amount, "RON", "RUB")
     let ronazn = await convertAndFormat(amount, "RON", "AZN")
     let ronmad = await convertAndFormat(amount, "RON", "MAD")
-    let romitl = await convertAndFormat(amount, "RON", "ITL")
+    let ronitl = await convertAndFormat(amount, "RON", "ITL")
     let rontry = await convertAndFormat(amount, "RON", "TRY")
 
     description = `${ronusd}\n${roneur}\n${ronrub}\n${ronazn}\n${ronmad}\n${ronitl}\n${rontry}`

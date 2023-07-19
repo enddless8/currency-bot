@@ -24,10 +24,14 @@ module.exports = {
 
 **v0.4.0 groucho patch**
 • added ITL
-• added /convert command
-• added /help command
-• added /changelog command
+• added </convert:1129484010402369546> command
+• added </help:1129516935953006632> command
+• added </changelog:1129522493527425196> command
 • added date in embed
+
+**v0.4.1 magath & shmeckerus patch**
+• fixed RON recognition
+• the same fixed in </convert:1129484010402369546>
 `
 
     let embed = new EmbedBuilder()
