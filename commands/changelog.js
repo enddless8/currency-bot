@@ -32,6 +32,9 @@ module.exports = {
 **v0.4.1 magath & shmeckerus patch**
 • fixed RON recognition
 • the same fixed in </convert:1129484010402369546>
+
+**v0.5.0 x0morkovka0x patch**
+• added UAH
 `
 
     let embed = new EmbedBuilder()

@@ -1,6 +1,6 @@
 {
   "name": "currency-bot",
-  "version": "0.4.1 magath & shmeckerus patch",
+  "version": "0.5.0 x0morkovka0x patch",
   "description": "This bot will convert some currencies to dollar, euro, ruble and etc.",
   "main": "index.js",
   "scripts": {
@@ -10,18 +10,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vanethepain/currency-bot.git"
+    "url": "git+https://github.com/vaneworld/currency-bot.git"
   },
   "keywords": [
     "currency",
     "bot"
   ],
-  "author": "Ivan Akimov <vanethepain@icloud.com>",
+  "author": "Ivan Akimov <ivanakimov@icloud.com>",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/vanethepain/currency-bot/issues"
+    "url": "https://github.com/vaneworld/currency-bot/issues"
   },
-  "homepage": "https://github.com/vanethepain/currency-bot#readme",
+  "homepage": "https://github.com/vaneworld/currency-bot#readme",
   "dependencies": {
     "currency-converter-lt": "^2.0.0",
     "discord.js": "^14.11.0"

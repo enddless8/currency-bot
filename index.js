@@ -73,18 +73,23 @@ client.on('messageCreate', async msg => {
   let amount = 0
   let amountToFixed = 0
   for (let i of textSplit.reverse()) {
-    if (i.includes("dollar") || i.includes("dolar") || i.includes("doller") || i.includes("doler") || i.includes("usd") || i.includes("доллар") || i.includes("долар") || i === "усд" || i === "усд." || i === ("$")) {
+    if (i.includes("dollar") || i.includes("dolar") || i.includes("doller") || i.includes("doler") || i.includes("usd") || i.includes("доллар") || i.includes("долар") || i === "усд" || i === "усд." || i === "$") {
       currency = 'USD'
       break
     }
 
-    if (i.includes("euro") || i.includes("eur") || i.includes("евро") || i === ("€")) {
+    if (i.includes("euro") || i.includes("eur") || i.includes("евро") || i === "€") {
       currency = 'EUR'
       break
     }
 
-    if (i.includes("ruble") || i.includes("rubble") || i.includes("rouble") || i.includes("roubble") || i.includes("bobux") || i.includes("rub") || i === ("руб") || i === ("руб.") || i.includes("рубл") || i === ("₽")) {
+    if (i.includes("ruble") || i.includes("rubble") || i.includes("rouble") || i.includes("roubble") || i.includes("bobux") || i.includes("rub") || i === "руб" || i === "руб." || i.includes("рубл") || i === "₽") {
       currency = 'RUB'
+      break
+    }
+
+    if (i.includes("hryvna") || i.includes("uah") || i.includes("гривн") || i.includes("гривен") || i === "грн" || i === "грн." || i === "₴") {
+      currency = 'UAH'
       break
     }
 
@@ -130,97 +135,124 @@ client.on('messageCreate', async msg => {
   if (currency === 'USD') {
     let usdeur = await convertAndFormat(amount, "USD", "EUR")
     let usdrub = await convertAndFormat(amount, "USD", "RUB")
+    let usduah = await convertAndFormat(amount, "USD", "UAH")
     let usdron = await convertAndFormat(amount, "USD", "RON")
     let usdazn = await convertAndFormat(amount, "USD", "AZN")
     let usdmad = await convertAndFormat(amount, "USD", "MAD")
     let usditl = await convertAndFormat(amount, "USD", "ITL")
     let usdtry = await convertAndFormat(amount, "USD", "TRY")
 
-    description = `${usdeur}\n${usdrub}\n${usdron}\n${usdazn}\n${usdmad}\n${usditl}\n${usdtry}`
+    description = `${usdeur}\n${usdrub}\n${usduah}\n${usdron}\n${usdazn}\n${usdmad}\n${usditl}\n${usdtry}`
   }
 
   if (currency === 'EUR') {
     let eurusd = await convertAndFormat(amount, "EUR", "USD")
     let eurrub = await convertAndFormat(amount, "EUR", "RUB")
+    let euruah = await convertAndFormat(amount, "EUR", "UAH")
     let eurron = await convertAndFormat(amount, "EUR", "RON")
     let eurazn = await convertAndFormat(amount, "EUR", "AZN")
     let eurmad = await convertAndFormat(amount, "EUR", "MAD")
     let euritl = await convertAndFormat(amount, "EUR", "ITL")
     let eurtry = await convertAndFormat(amount, "EUR", "TRY")
 
-    description = `${eurusd}\n${eurrub}\n${eurron}\n${eurazn}\n${eurmad}\n${euritl}\n${eurtry}`
+    description = `${eurusd}\n${eurrub}\n${euruah}\n${eurron}\n${eurazn}\n${eurmad}\n${euritl}\n${eurtry}`
   }
 
   if (currency === 'RUB') {
     let rubusd = await convertAndFormat(amount, "RUB", "USD")
     let rubeur = await convertAndFormat(amount, "RUB", "EUR")
+    let rubuah = await convertAndFormat(amount, "RUB", "UAH")
     let rubron = await convertAndFormat(amount, "RUB", "RON")
     let rubazn = await convertAndFormat(amount, "RUB", "AZN")
     let rubmad = await convertAndFormat(amount, "RUB", "MAD")
     let rubitl = await convertAndFormat(amount, "RUB", "ITL")
     let rubtry = await convertAndFormat(amount, "RUB", "TRY")
 
-    description = `${rubusd}\n${rubeur}\n${rubron}\n${rubazn}\n${rubmad}\n${rubitl}\n${rubtry}`
+    description = `${rubusd}\n${rubeur}\n${rubuah}\n${rubron}\n${rubazn}\n${rubmad}\n${rubitl}\n${rubtry}`
+  }
+
+  if (currency === 'UAH') {
+    let uahusd = await convertAndFormat(amount, "UAH", "USD")
+    let uaheur = await convertAndFormat(amount, "UAH", "EUR")
+    let uahrub = await convertAndFormat(amount, "UAH", "RUB")
+    let uahron = await convertAndFormat(amount, "UAH", "RON")
+    let uahazn = await convertAndFormat(amount, "UAH", "AZN")
+    let uahmad = await convertAndFormat(amount, "UAH", "MAD")
+    let uahitl = await convertAndFormat(amount, "UAH", "ITL")
+    let uahtry = await convertAndFormat(amount, "UAH", "TRY")
+
+    let pants = '👖 **1** pants'
+
+    description = `${uahusd}\n${uaheur}\n${uahrub}\n${uahron}\n${uahazn}\n${uahmad}\n${uahitl}\n${uahtry}`
+
+    if (amount === 40) {
+      description = description + `\n${pants}`
+    }
   }
 
   if (currency === 'RON') {
     let ronusd = await convertAndFormat(amount, "RON", "USD")
     let roneur = await convertAndFormat(amount, "RON", "EUR")
     let ronrub = await convertAndFormat(amount, "RON", "RUB")
+    let ronuah = await convertAndFormat(amount, "RON", "UAH")
     let ronazn = await convertAndFormat(amount, "RON", "AZN")
     let ronmad = await convertAndFormat(amount, "RON", "MAD")
     let ronitl = await convertAndFormat(amount, "RON", "ITL")
     let rontry = await convertAndFormat(amount, "RON", "TRY")
 
-    description = `${ronusd}\n${roneur}\n${ronrub}\n${ronazn}\n${ronmad}\n${ronitl}\n${rontry}`
+    description = `${ronusd}\n${roneur}\n${ronrub}\n${ronuah}\n${ronazn}\n${ronmad}\n${ronitl}\n${rontry}`
   }
 
   if (currency === "AZN") {
     let aznusd = await convertAndFormat(amount, "AZN", "USD")
     let azneur = await convertAndFormat(amount, "AZN", "EUR")
     let aznrub = await convertAndFormat(amount, "AZN", "RUB")
+    let aznuah = await convertAndFormat(amount, "AZN", "UAH")
     let aznron = await convertAndFormat(amount, "AZN", "RON")
     let aznmad = await convertAndFormat(amount, "AZN", "MAD")
-    let aznitl = await convertAndFormat(amount, "RON", "ITL")
+    let aznitl = await convertAndFormat(amount, "AZN", "ITL")
     let azntry = await convertAndFormat(amount, "AZN", "TRY")
 
-    description = `${aznusd}\n${azneur}\n${aznrub}\n${aznron}\n${aznmad}\n${aznitl}\n${azntry}`
+    description = `${aznusd}\n${azneur}\n${aznrub}\n${aznuah}\n${aznron}\n${aznmad}\n${aznitl}\n${azntry}`
   }
 
   if (currency === "MAD") {
     let madusd = await convertAndFormat(amount, "MAD", "USD")
     let madeur = await convertAndFormat(amount, "MAD", "EUR")
     let madrub = await convertAndFormat(amount, "MAD", "RUB")
+    let maduah = await convertAndFormat(amount, "MAD", "UAH")
     let madron = await convertAndFormat(amount, "MAD", "RON")
     let madazn = await convertAndFormat(amount, "MAD", "AZN")
-    let maditl = await convertAndFormat(amount, "RON", "ITL")
+    let maditl = await convertAndFormat(amount, "MAD", "ITL")
     let madtry = await convertAndFormat(amount, "MAD", "TRY")
 
-    description = `${madusd}\n${madeur}\n${madrub}\n${madron}\n${madazn}\n${maditl}\n${madtry}`
+    description = `${madusd}\n${madeur}\n${madrub}\n${maduah}\n${madron}\n${madazn}\n${maditl}\n${madtry}`
   }
 
   if (currency === "ITL") {
     let itlusd = await convertAndFormat(amount, "ITL", "USD")
     let itleur = await convertAndFormat(amount, "ITL", "EUR")
     let itlrub = await convertAndFormat(amount, "ITL", "RUB")
+    let itluah = await convertAndFormat(amount, "ITL", "UAH")
     let itlron = await convertAndFormat(amount, "ITL", "RON")
     let itlazn = await convertAndFormat(amount, "ITL", "AZN")
     let itlmad = await convertAndFormat(amount, "ITL", "MAD")
     let itltry = await convertAndFormat(amount, "ITL", "TRY")
 
-    description = `${itlusd}\n${itleur}\n${itlrub}\n${itlron}\n${itlazn}\n${itlmad}\n${itltry}`
+    description = `${itlusd}\n${itleur}\n${itlrub}\n${itluah}\n${itlron}\n${itlazn}\n${itlmad}\n${itltry}`
   }
 
   if (currency === "TRY") {
     let tryusd = await convertAndFormat(amount, "TRY", "USD")
     let tryeur = await convertAndFormat(amount, "TRY", "EUR")
     let tryrub = await convertAndFormat(amount, "TRY", "RUB")
+    let tryuah = await convertAndFormat(amount, "TRY", "UAH")
     let tryron = await convertAndFormat(amount, "TRY", "RON")
     let tryazn = await convertAndFormat(amount, "TRY", "AZN")
     let trymad = await convertAndFormat(amount, "TRY", "MAD")
-    let tryitl = await convertAndFormat(amount, "RON", "ITL")
+    let tryitl = await convertAndFormat(amount, "TRY", "ITL")
 
-    description = `${tryusd}\n${tryeur}\n${tryrub}\n${tryron}\n${tryazn}\n${trymad}\n${tryitl}`
+    description = `${tryusd}\n${tryeur}\n${tryrub}\n${tryuah}\n${tryron}\n${tryazn}\n${trymad}\n${tryitl}`
   }
 
   let embed = new EmbedBuilder()
